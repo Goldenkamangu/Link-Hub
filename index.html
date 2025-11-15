@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <button id="theme-toggle" title="Toggle theme">🌙</button>
+        <h1>Link Hub</h1>
+        <p>A curated list of my favorite places on the web.</p>
+    </header>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search links...">
+    </div>
+
+    <div class="category-filters">
+        <button class="filter-btn active" data-category="all">All</button>
+        <button class="filter-btn" data-category="development">Development</button>
+        <button class="filter-btn" data-category="learning">Learning</button>
+        <button class="filter-btn" data-category="tools">Tools</button>
+    </div>
+
+    <main class="link-container">
+        <div class="card" data-category="development">
+            <a href="https://github.com" target="_blank">
+                <img src="https://picsum.photos/400/200?random=1" alt="GitHub">
+            </a>
+            <div class="card-content">
+                <h3><a href="https://github.com" target="_blank">GitHub</a></h3>
+                <p>Where the world builds software.</p>
+                <a href="https://github.com" target="_blank" class="view-btn">View Site</a>
+            </div>
+        </div>
+        <div class="card" data-category="learning">
+            <a href="https://www.freecodecamp.org/" target="_blank">
+                <img src="https://picsum.photos/400/200?random=2" alt="freeCodeCamp">
+            </a>
+            <div class="card-content">
+                <h3><a href="https://www.freecodecamp.org/" target="_blank">freeCodeCamp</a></h3>
+                <p>Learn to code for free.</p>
+                <a href="https://www.freecodecamp.org/" target="_blank" class="view-btn">View Site</a>
+            </div>
+        </div>
+        <div class="card" data-category="learning">
+            <a href="https://developer.mozilla.org/en-US/" target="_blank">
+                <img src="https://picsum.photos/400/200?random=3" alt="MDN Web Docs">
+            </a>
+            <div class="card-content">
+                <h3><a href="https://developer.mozilla.org/en-US/" target="_blank">MDN Web Docs</a></h3>
+                <p>Resources for developers, by developers.</p>
+                <a href="https://developer.mozilla.org/en-US/" target="_blank" class="view-btn">View Site</a>
+            </div>
+        </div>
+        <div class="card" data-category="learning">
+            <a href="https://css-tricks.com/" target="_blank">
+                <img src="https://picsum.photos/400/200?random=4" alt="CSS-Tricks">
+            </a>
+            <div class="card-content">
+                <h3><a href="https://css-tricks.com/" target="_blank">CSS-Tricks</a></h3>
+                <p>Daily articles about CSS, HTML, and JavaScript.</p>
+                <a href="https://css-tricks.com/" target="_blank" class="view-btn">View Site</a>
+            </div>
+        </div>
+        <div class="card" data-category="tools">
+            <a href="https://www.codepen.io" target="_blank">
+                <img src="https://picsum.photos/400/200?random=5" alt="CodePen">
+            </a>
+            <div class="card-content">
+                <h3><a href="https://www.codepen.io" target="_blank">CodePen</a></h3>
+                <p>Front-end developer playground.</p>
+                <a href="https://www.codepen.io" target="_blank" class="view-btn">View Site</a>
+            </div>
+        </div>
+        <div class="card" data-category="development">
+            <a href="https://stackoverflow.com/" target="_blank">
+                <img src="https://picsum.photos/400/200?random=6" alt="Stack Overflow">
+            </a>
+            <div class="card-content">
+                <h3><a href="https://stackoverflow.com/" target="_blank">Stack Overflow</a></h3>
+                <p>Where developers learn, share, & build careers.</p>
+                <a href="https://stackoverflow.com/" target="_blank" class="view-btn">View Site</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Link Hub</p>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
