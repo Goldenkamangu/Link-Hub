@@ -1,126 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Link Hub</title>
-    <link rel="icon" href="Logo2.png" type="image/png">
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Link Hub - Marketplace</title>
+  <!-- Google Font Family Load integration matching your design presets -->
+  <link href="https://googleapis.com" rel="stylesheet">
+  <!-- Supabase client framework script CDN asset library -->
+  <script src="https://jsdelivr.net"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header>
-        <div class="header-left">
-            <img src="logo1.png" alt="Link Hub Logo" class="logo">
-        </div>
-        <button id="theme-toggle" title="Toggle theme">🌙</button>
-        <h1>Link Hub</h1>
-        <p>A curated list of my favorite places on the web.</p>
-    </header>
-
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search links...">
-    </div>
-
-    <div class="category-filters">
-        <button class="filter-btn active" data-category="all">All</button>
-        <button class="filter-btn" data-category="Games">Games</button>
-        <button class="filter-btn" data-category="Movies">Movies</button>
-        <button class="filter-btn" data-category="development">Development</button>
-        <button class="filter-btn" data-category="learning">Learning</button>
-        <button class="filter-btn" data-category="tools">Tools</button>
-    </div>
-
-    <main class="link-container">
-        <div class="card" data-category="tools">
-            <a href="https://www.sejda.com/pdf-editor" target="_blank">
-                <img src="Sejda.png" alt="Sejda pdf-editor">
-            </a>
-            <div class="card-content">
-                <h3><a href="https://www.sejda.com/pdf-editor" target="_blank">Sejda pdf-editor</a></h3>
-                <p>Free online PDF editor to edit, convert, and compress PDF files.</p>
-                <a href="https://www.sejda.com/pdf-editor" target="_blank" class="view-btn">View Site</a>
-            </div>
-        </div>
-               <div class="card" data-category="Games">
-            <a href="https://fitgirl-repacks.site/popular-repacks/" target="_blank">
-                <img src="Fitgirl.png" alt="Fitgirl">
-            </a>
-            <div class="card-content">
-                <h3><a href="https://fitgirl-repacks.site/popular-repacks/" target="_blank">Fitgirl</a></h3>
-                <p>FitGirl Repacks is known for "repacking" games – compressing them significantly so they can be downloaded and shared more efficiently.</p>
-                <a href="https://fitgirl-repacks.site/popular-repacks/" target="_blank" class="view-btn">View Site</a>
-            </div>
-        </div>
-        <div class="card" data-category="Games">
-            <a href="https://romsfun.com/roms/" target="_blank">
-                <img src="Romsfun.png" alt="Romsfun">
-            </a>
-            <div class="card-content">
-                <h3><a href="https://romsfun.com/roms/" target="_blank">Romsfun</a></h3>
-                <p>Romsfun is a website that provides a large collection of ROMs and emulators for various gaming consoles.</p>
-                <a href="https://romsfun.com/roms/" target="_blank" class="view-btn">View Site</a>
-            </div>
-        </div>
-        <div class="card" data-category="learning">
-            <a href="https://www.freecodecamp.org/" target="_blank">
-                <img src="freecodecamp.png" alt="freeCodeCamp">
-            </a>
-            <div class="card-content">
-                <h3><a href="https://www.freecodecamp.org/" target="_blank">freeCodeCamp</a></h3>
-                <p>freeCodeCamp is a free online learning platform for anyone who wants to learn to code, with a focus on helping people transition into tech careers.</p>
-                <a href="https://www.freecodecamp.org/" target="_blank" class="view-btn">View Site</a>
-            </div>
-        </div>
-        <div class="card" data-category="Movies">
-            <a href="https://ridomovies.tv/channels" target="_blank">
-                <img src="Ridomovies.png" alt="Ridomovies">
-            </a>
-            <div class="card-content">
-                <h3><a href="https://ridomovies.tv/channels" target="_blank">Ridomovies</a></h3>
-                <p>Ridomovies is a website that allows users to stream a variety of movies and TV shows for free.</p>
-                <a href="https://ridomovies.tv/channels" target="_blank" class="view-btn">View Site</a>
-            </div>
-        </div>
-        <div class="card" data-category="Movies">
-            <a href="https://9animetv.to/" target="_blank">
-                <img src="9anime.png" alt="9anime">
-            </a>
-            <div class="card-content">
-                <h3><a href="https://9animetv.to/" target="_blank">9anime</a></h3>
-                <p>9anime is a anime-focused file streaming website that hosted links and embedded videos, allowing users to stream or download movies and TV shows illegally for free.</p>
-                <a href="https://9animetv.to/" target="_blank" class="view-btn">View Site</a>
-            </div>
-        </div>
-        <div class="card" data-category="Movies">
-            <a href="https://ww1.goojara.to/watch-movies-genre" target="_blank">
-                <img src="goojara.png" alt="goojara">
-            </a>
-            <div class="card-content">
-                <h3><a href="https://ww1.goojara.to/watch-movies-genre" target="_blank">Goojara</a></h3>
-                <p>Goojara is a platform that provides access to a large library of movies, TV shows, and anime, allowing users to stream content for free.</p>
-                <a href="https://ww1.goojara.to/watch-movies-genre" target="_blank" class="view-btn">View Site</a>
-            </div>
-        </div>
-        <div class="card" data-category="Movies">
-            <a href="htt9anime is a anime-focused file streaming website that hosted links and embedded videos, allowing users to stream or download movies and TV shows illegally for free.ps://yts.mx/" target="_blank">
-                <img src="YTS_logo.png" alt="yts">
-            </a>
-            <div class="card-content">
-                <h3><a href="https://yts.mx/" target="_blank">yts</a></h3>
-                <p>YTS, also known as YIFY, is a popular movie torrent site that gained immense popularity for its high-quality, compressed movie releases.</p>
-                <a href="https://yts.lt/" target="_blank" class="view-btn">View Site</a>
-            </div>
-        </div>
-    </main>
+  <!-- Layout Action Configuration Header Container Block -->
+  <header>
+    <h1>Link Hub Marketplace</h1>
+    <p>Post items you want to sell, find deals, and chat with buyers instantly.</p>
     
-    <footer>
-        <p>&copy; 2025 Link Hub</p>
-    </footer>
+    <!-- Original Round Floating Mode Toggle Interface Button -->
+    <button id="theme-toggle" onclick="toggleThemeMode()" aria-label="Toggle visual theme palette color state">🌓</button>
+  </header>
 
-    <script src="script.js"></script>
+  
+  <div class="status-banner">
+    <div id="auth-status"></div>
+  </div>
+
+  <!-- Central Dynamic Application Workspace Core Interface Split Layout Pane -->
+  <main class="main-layout-wrapper">
+    
+    <!-- Management forms block sidebar layout panel node -->
+    <div class="form-sidebar-column">
+      
+      <!-- User Profile Security Registration Authorization Portal Panel -->
+      <div id="auth-box" class="card">
+        <div class="card-content">
+          <h3>Account Access</h3>
+          <p>Create an account or sign in to open negotiation channels and list items.</p>
+          <div class="interactive-form-group">
+            <input type="email" id="auth-email" placeholder="Email Address">
+            <input type="password" id="auth-password" placeholder="Password">
+            <div class="button-split-grid">
+              <button onclick="handleSignIn()" class="view-btn">Sign In</button>
+              <button onclick="handleSignUp()" class="view-btn alt-btn-style">Sign Up</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secure Workspace Form Publishing Engine Module Container Card -->
+      <div id="sell-box" class="card hidden">
+        <div class="card-content">
+          <h3>Post a Listing</h3>
+          <p>Fill out the target configuration forms below to host a product offer globally.</p>
+          <div class="interactive-form-group">
+            <input type="text" id="item-title" placeholder="Item Name / Title">
+            <textarea id="item-desc" placeholder="Item Description Details"></textarea>
+            <input type="number" id="item-price" placeholder="Price ($)">
+            <div class="upload-wrapper-box">
+              <label for="item-image">Product Photo</label>
+              <input type="file" id="item-image" accept="image/*">
+            </div>
+            <button onclick="publishListing()" class="view-btn">Publish Offer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Real-Time Catalog Item Feed Column Structure Stream Pipeline -->
+    <div class="feed-content-column">
+      <h2 class="section-title-label">Live Marketplace Items</h2>
+      <div id="listings-feed" class="link-container">
+        <!-- Javascript components loaded automatically during database fetch evaluation cycles -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Interactive Negotiation Communication Portal Modal Overlay Sheet Container -->
+  <div id="chat-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="chat-title">Negotiation Interface</h3>
+        <button onclick="closeChatRoom()" class="close-modal-x-btn">&times;</button>
+      </div>
+      <div id="chat-messages" class="modal-message-body-stream">
+        <!-- Loaded streams render dynamically during live message evaluation loops -->
+      </div>
+      <div class="modal-footer-input-row">
+        <input type="text" id="chat-input" placeholder="Type a message to the seller...">
+        <button onclick="sendChatMessage()" class="view-btn">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer block -->
+  <footer>
+    <p>&copy; 2026 Link Hub Marketplace. All rights reserved.</p>
+  </footer>
+
+  <script src="app.js"></script>
 </body>
 </html>
