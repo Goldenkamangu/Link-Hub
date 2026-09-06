@@ -7,15 +7,14 @@ let activeChatListingId = null;
 let chatSubscriptionChannel = null;
 let myStore = null;
 
-const esc = value => String(value ?? "").replace(/[&<>\"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[char]));
+const esc = value => String(value ?? "").replace(/[&<>\"]/g, char => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[char]));
 const first = (object, keys, fallback = "") => {
   for (const key of keys) {
     if (object && object[key] !== undefined && object[key] !== null && object[key] !== "") return object[key];
   }
   return fallback;
 };
-const fallbackSvg = encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300"><rect width="100%" height="100%" fill="#151515"/><text x="50%" y="50%" fill="#777" text-anchor="middle" dominant-baseline="middle" font-family="Arial">No image</text></svg>');
-const imageFallback = `data:image/svg+xml;charset=UTF-8,${fallbackSvg}`;
+const brokenImage = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="300"><rect width="100%" height="100%" fill="#151515"/><text x="50%" y="50%" fill="#777" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="24">Image unavailable</text></svg>');
 
 function toggleThemeMode() {
   document.body.classList.toggle("light-mode");
@@ -30,6 +29,31 @@ function updateThemeButton() {
   if (localStorage.getItem("themePreference") === "light") document.body.classList.add("light-mode");
   updateThemeButton();
 })();
+
+function bindImageState(img) {
+  if (!img) return;
+  img.dataset.imageState = "loading";
+  img.addEventListener("load", () => {
+    if (img.naturalWidth > 0) {
+      img.dataset.imageState = "loaded";
+      img.classList.remove("image-failed");
+    }
+  }, { once: true });
+  img.addEventListener("error", () => {
+    img.dataset.imageState = "failed";
+    img.classList.add("image-failed");
+    img.src = brokenImage;
+  }, { once: true });
+  if (img.complete) {
+    if (img.naturalWidth > 0) img.dataset.imageState = "loaded";
+    else img.dispatchEvent(new Event("error"));
+  }
+}
+
+function imageHtml(url, className, alt = "", extra = "") {
+  const src = url ? esc(url) : brokenImage;
+  return `<img class="${className}" src="${src}" alt="${esc(alt)}" loading="lazy" decoding="async" onerror="this.classList.add('image-failed');this.src='${brokenImage}'" ${extra}>`;
+}
 
 window.addEventListener("DOMContentLoaded", async () => {
   const { data: { session } } = await _supabase.auth.getSession();
@@ -89,8 +113,7 @@ function normalizeStore(row) {
     name: first(row, ["store_name", "name", "business_name", "title"], "Business Store"),
     description: first(row, ["description", "bio", "about", "store_description"], ""),
     logo: first(row, ["logo_url", "logo", "store_logo", "avatar_url", "image_url"]),
-    banner: first(row, ["banner_url", "banner", "store_banner", "cover_url", "cover_image_url"]),
-    createdAt: first(row, ["created_at"])
+    banner: first(row, ["banner_url", "banner", "store_banner", "cover_url", "cover_image_url"])
   };
 }
 
@@ -113,8 +136,7 @@ async function loadMyStore() {
     console.error("loadMyStore:", error);
     return;
   }
-  const found = (rows || []).map(normalizeStore).find(store => String(store.ownerId) === String(activeSession.user.id));
-  myStore = found || null;
+  myStore = (rows || []).map(normalizeStore).find(store => String(store.ownerId) === String(activeSession.user.id)) || null;
   const title = document.getElementById("store-form-title");
   if (title) title.textContent = myStore ? "Edit your store" : "Create your store";
 }
@@ -143,15 +165,15 @@ async function fetchStores() {
   if (listingsError) console.error("store products:", listingsError);
   const products = (allListings || []).map(normalizeListing);
 
-  for (const store of stores) {
+  stores.forEach(store => {
     const storeProducts = store.ownerId ? products.filter(product => String(product.ownerId) === String(store.ownerId)).slice(0, 5) : [];
-    const thumbs = storeProducts.filter(product => product.image).slice(0, 4).map(product => `<img class="store-product-thumb" src="${esc(product.image)}" alt="" loading="lazy">`).join("");
+    const thumbs = storeProducts.filter(product => product.image).slice(0, 4).map(product => imageHtml(product.image, "store-product-thumb", product.title)).join("");
     const card = document.createElement("article");
     card.className = "store-card";
     card.innerHTML = `
-      <img class="store-banner" src="${esc(store.banner || imageFallback)}" alt="${esc(store.name)} banner" loading="lazy">
+      ${imageHtml(store.banner, "store-banner", store.name + " banner")}
       <div class="store-body">
-        <img class="store-logo" src="${esc(store.logo || imageFallback)}" alt="${esc(store.name)} logo" loading="lazy">
+        ${imageHtml(store.logo, "store-logo", store.name + " logo")}
         <div class="store-body-inner">
           <h3>${esc(store.name)}</h3>
           <p>${esc(store.description || "Welcome to our store.")}</p>
@@ -160,7 +182,9 @@ async function fetchStores() {
       </div>`;
     card.addEventListener("click", () => openStore(store, storeProducts));
     feed.appendChild(card);
-  }
+    card.querySelectorAll("img").forEach(bindImageState);
+  });
+
   status.textContent = `${stores.length} store${stores.length === 1 ? "" : "s"}`;
   return stores;
 }
@@ -172,19 +196,20 @@ function openStore(store, products) {
   const normalizedProducts = (products || []).map(normalizeListing);
   content.innerHTML = `
     <div class="store-modal-content">
-      <img class="store-modal-banner" src="${esc(store.banner || imageFallback)}" alt="${esc(store.name)} banner">
-      <img class="store-modal-logo" src="${esc(store.logo || imageFallback)}" alt="${esc(store.name)} logo">
+      ${imageHtml(store.banner, "store-modal-banner", store.name + " banner")}
+      ${imageHtml(store.logo, "store-modal-logo", store.name + " logo")}
       <h2>${esc(store.name)}</h2>
       <p class="store-description">${esc(store.description || "")}</p>
       <div class="store-modal-products">
         ${normalizedProducts.length ? normalizedProducts.map(product => `
           <div class="mini-product">
-            ${product.image ? `<img src="${esc(product.image)}" alt="${esc(product.title)}" loading="lazy">` : ""}
+            ${product.image ? imageHtml(product.image, "mini-product-image", product.title) : ""}
             <div><strong>${esc(product.title)}</strong>${product.price !== "" ? `<br>$${esc(product.price)}` : ""}</div>
           </div>`).join("") : "<p>No products listed yet.</p>"}
       </div>
     </div>`;
   modal.classList.remove("hidden");
+  content.querySelectorAll("img").forEach(bindImageState);
 }
 
 function closeStoreModal(event) {
@@ -218,11 +243,8 @@ async function removeStorageFile(url) {
   const parsed = storagePathFromUrl(url);
   if (!parsed) return false;
   const { error } = await _supabase.storage.from(parsed.bucket).remove([parsed.path]);
-  if (error) {
-    console.warn("Storage cleanup failed:", error.message);
-    return false;
-  }
-  return true;
+  if (error) console.warn("Storage cleanup failed:", error.message);
+  return !error;
 }
 
 async function uploadStoreImage(file, type) {
@@ -265,12 +287,9 @@ async function saveStore(event) {
     if ("logo_url" in current || !myStore) payload.logo_url = newLogo || myStore?.logo || null;
     if ("banner_url" in current || !myStore) payload.banner_url = newBanner || myStore?.banner || null;
 
-    let result;
-    if (myStore?.id) {
-      result = await _supabase.from("stores").update(payload).eq("id", myStore.id);
-    } else {
-      result = await _supabase.from("stores").insert(payload);
-    }
+    const result = myStore?.id
+      ? await _supabase.from("stores").update(payload).eq("id", myStore.id)
+      : await _supabase.from("stores").insert(payload);
     if (result.error) throw result.error;
 
     if (myStore) {
@@ -304,7 +323,6 @@ async function publishListing() {
   if (!title || !validatePrice(price)) return alert("Enter a title and a price between $0.01 and $50,000.");
 
   let imageUrl = "";
-  let uploadedUrl = null;
   try {
     if (input.files[0]) {
       const file = input.files[0];
@@ -312,17 +330,18 @@ async function publishListing() {
       const upload = await _supabase.storage.from("marketplace-media").upload(path, file, { upsert: false, contentType: file.type || "image/jpeg" });
       if (upload.error) throw upload.error;
       imageUrl = _supabase.storage.from("marketplace-media").getPublicUrl(path).data.publicUrl;
-      uploadedUrl = imageUrl;
     }
+
     const { error } = await _supabase.from("listings").insert({ title, description, price, image_url: imageUrl, seller_id: activeSession.user.id });
     if (error) throw error;
+
     document.getElementById("item-title").value = "";
     document.getElementById("item-desc").value = "";
     document.getElementById("item-price").value = "";
     input.value = "";
     await refreshEverything();
   } catch (error) {
-    if (uploadedUrl) await removeStorageFile(uploadedUrl);
+    if (imageUrl) await removeStorageFile(imageUrl);
     alert("Could not publish listing: " + error.message);
   }
 }
@@ -333,19 +352,29 @@ async function fetchActiveListings() {
   if (!feed || !status) return;
   feed.innerHTML = "";
   status.textContent = "Loading listings...";
+
   const { data: items, error } = await _supabase.from("listings").select("*").order("created_at", { ascending: false });
   if (error) {
     status.textContent = "Listings could not be loaded.";
     console.error(error);
     return;
   }
-  status.textContent = `${items?.length || 0} listing${items?.length === 1 ? "" : "s"}`;
-  (items || []).map(normalizeListing).forEach(item => {
+
+  const normalized = (items || []).map(normalizeListing);
+  status.textContent = `${normalized.length} listing${normalized.length === 1 ? "" : "s"}`;
+  normalized.forEach(item => {
     const card = document.createElement("article");
     card.className = "listing-card";
-    card.innerHTML = `<img src="${esc(item.image || imageFallback)}" alt="${esc(item.title)}" loading="lazy"><div class="card-content"><div class="price-header-wrapper"><h3>${esc(item.title)}</h3><span class="custom-price-tag-value">${item.price !== "" ? `$${esc(item.price)}` : ""}</span></div><p>${esc(item.description || "No description provided.")}</p><button class="view-btn">💬 Contact Seller / Offer</button></div>`;
+    card.innerHTML = `
+      ${imageHtml(item.image, "listing-image", item.title)}
+      <div class="card-content">
+        <div class="price-header-wrapper"><h3>${esc(item.title)}</h3><span class="custom-price-tag-value">${item.price !== "" ? `$${esc(item.price)}` : ""}</span></div>
+        <p>${esc(item.description || "No description provided.")}</p>
+        <button class="view-btn" type="button">💬 Contact Seller / Offer</button>
+      </div>`;
     card.querySelector("button").addEventListener("click", () => openChatRoom(item.id, item.title));
     feed.appendChild(card);
+    card.querySelectorAll("img").forEach(bindImageState);
   });
 }
 
@@ -355,6 +384,7 @@ async function openChatRoom(listingId, listingTitle) {
   document.getElementById("chat-title").textContent = `Negotiation Chat: ${listingTitle}`;
   document.getElementById("chat-modal").classList.remove("hidden");
   document.getElementById("chat-messages").innerHTML = '<p class="syncing-channel-text">Loading messages...</p>';
+
   const { data } = await _supabase.from("messages").select("*").eq("listing_id", listingId).order("created_at", { ascending: true });
   renderChatHistory(data || []);
   if (chatSubscriptionChannel) _supabase.removeChannel(chatSubscriptionChannel);
@@ -366,23 +396,27 @@ function renderChatHistory(messages) {
   container.innerHTML = messages.length ? "" : '<p class="syncing-channel-text">No messages yet.</p>';
   messages.forEach(appendSingleMessage);
 }
-function appendSingleMessage(message) {
+
+function appendSingleMessage(msg) {
   const container = document.getElementById("chat-messages");
   if (container.querySelector(".syncing-channel-text")) container.innerHTML = "";
-  const mine = message.sender_email === activeSession?.user?.email;
+  const mine = msg.sender_email === activeSession?.user?.email;
   const bubble = document.createElement("div");
   bubble.className = `message-bubble-node ${mine ? "outgoing-cloud" : "incoming-cloud"}`;
-  bubble.innerHTML = `<span class="msg-meta">${esc(message.sender_email)}</span><span>${esc(message.message)}</span>`;
+  bubble.innerHTML = `<span class="msg-meta">${esc(msg.sender_email)}</span><span>${esc(msg.message)}</span>`;
   container.appendChild(bubble);
   container.scrollTop = container.scrollHeight;
 }
+
 async function sendChatMessage() {
   const input = document.getElementById("chat-input");
   const text = input.value.trim();
   if (!text || !activeChatListingId || !activeSession) return;
   const { error } = await _supabase.from("messages").insert({ listing_id: activeChatListingId, sender_email: activeSession.user.email, message: text });
-  if (error) alert(error.message); else input.value = "";
+  if (error) alert(error.message);
+  else input.value = "";
 }
+
 function closeChatRoom(event) {
   const modal = document.getElementById("chat-modal");
   if (!event || event.target === modal) {
@@ -394,5 +428,6 @@ function closeChatRoom(event) {
 }
 
 async function refreshEverything() {
-  await Promise.allSettled([fetchStores(), fetchActiveListings(), activeSession ? loadMyStore() : Promise.resolve()]);
+  await Promise.all([fetchStores(), fetchActiveListings()]);
+  if (activeSession) await loadMyStore();
 }
