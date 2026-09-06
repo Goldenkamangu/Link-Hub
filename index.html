@@ -1,103 +1,136 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Link Hub - Marketplace</title>
-  <!-- Google Font Family Load integration matching your design presets -->
-  <link href="https://googleapis.com" rel="stylesheet">
-  <!-- Supabase client framework script CDN asset library -->
-  <script src="https://jsdelivr.net"></script>
+  <meta name="theme-color" content="#0a0a0a">
+  <title>Link Hub Marketplace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-
-  <!-- Layout Action Configuration Header Container Block -->
-  <header>
-    <h1>Link Hub Marketplace</h1>
-    <p>Post items you want to sell, find deals, and chat with buyers instantly.</p>
-    
-    <!-- Original Round Floating Mode Toggle Interface Button -->
-    <button id="theme-toggle" onclick="toggleThemeMode()" aria-label="Toggle visual theme palette color state">🌓</button>
+  <header class="site-header">
+    <div class="header-inner">
+      <div>
+        <h1>Link Hub</h1>
+        <p>Buy, sell and discover products and Business Storefronts.</p>
+      </div>
+      <button id="theme-toggle" type="button" aria-label="Toggle theme" onclick="toggleThemeMode()">🌙</button>
+    </div>
   </header>
 
-  
-  <div class="status-banner">
-    <div id="auth-status"></div>
-  </div>
+  <div class="status-banner"><div id="auth-status"></div></div>
 
-  <!-- Central Dynamic Application Workspace Core Interface Split Layout Pane -->
-  <main class="main-layout-wrapper">
-    
-    <!-- Management forms block sidebar layout panel node -->
-    <div class="form-sidebar-column">
-      
-      <!-- User Profile Security Registration Authorization Portal Panel -->
-      <div id="auth-box" class="card">
-        <div class="card-content">
-          <h3>Account Access</h3>
-          <p>Create an account or sign in to open negotiation channels and list items.</p>
-          <div class="interactive-form-group">
-            <input type="email" id="auth-email" placeholder="Email Address">
-            <input type="password" id="auth-password" placeholder="Password">
-            <div class="button-split-grid">
-              <button onclick="handleSignIn()" class="view-btn">Sign In</button>
-              <button onclick="handleSignUp()" class="view-btn alt-btn-style">Sign Up</button>
+  <main class="page-shell">
+    <section class="storefront-section">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">BUSINESS STOREFRONTS</span>
+          <h2>Discover stores</h2>
+          <p>Active stores and their products are loaded from Supabase.</p>
+        </div>
+        <button id="open-store-editor" class="view-btn secondary-action hidden" type="button" onclick="openStoreEditor()">My Store</button>
+      </div>
+      <div id="stores-status" class="inline-status"></div>
+      <div id="stores-feed" class="stores-grid"></div>
+    </section>
+
+    <section class="main-layout-wrapper">
+      <aside class="form-sidebar-column">
+        <div id="auth-box" class="card">
+          <div class="card-content">
+            <h3>Account Access</h3>
+            <p>Create an account or sign in to post products and manage your store.</p>
+            <div class="interactive-form-group">
+              <input type="email" id="auth-email" placeholder="Email Address" autocomplete="email">
+              <input type="password" id="auth-password" placeholder="Password" autocomplete="current-password">
+              <div class="button-split-grid">
+                <button type="button" onclick="handleSignIn()" class="view-btn">Sign In</button>
+                <button type="button" onclick="handleSignUp()" class="view-btn alt-btn-style">Sign Up</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Secure Workspace Form Publishing Engine Module Container Card -->
-      <div id="sell-box" class="card hidden">
-        <div class="card-content">
-          <h3>Post a Listing</h3>
-          <p>Fill out the target configuration forms below to host a product offer globally.</p>
-          <div class="interactive-form-group">
-            <input type="text" id="item-title" placeholder="Item Name / Title">
-            <textarea id="item-desc" placeholder="Item Description Details"></textarea>
-            <input type="number" id="item-price" placeholder="Price ($)">
-            <div class="upload-wrapper-box">
-              <label for="item-image">Product Photo</label>
-              <input type="file" id="item-image" accept="image/*">
+        <div id="store-box" class="card hidden">
+          <div class="card-content">
+            <div class="panel-heading-row">
+              <div>
+                <span class="eyebrow">BUSINESS STOREFRONT</span>
+                <h3 id="store-form-title">Create your store</h3>
+              </div>
+              <button type="button" class="text-button" onclick="closeStoreEditor()">Close</button>
             </div>
-            <button onclick="publishListing()" class="view-btn">Publish Offer</button>
+            <form id="store-form" class="interactive-form-group" onsubmit="saveStore(event)">
+              <input type="text" id="store-name" placeholder="Store name" maxlength="80" required>
+              <textarea id="store-description" placeholder="What does your business sell?" maxlength="500"></textarea>
+              <label class="file-label" for="store-logo">Store logo</label>
+              <input type="file" id="store-logo" accept="image/*">
+              <label class="file-label" for="store-banner">Store banner</label>
+              <input type="file" id="store-banner" accept="image/*">
+              <button type="submit" class="view-btn" id="save-store-button">Save Store</button>
+              <p id="store-form-status" class="form-status"></p>
+            </form>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Active Real-Time Catalog Item Feed Column Structure Stream Pipeline -->
-    <div class="feed-content-column">
-      <h2 class="section-title-label">Live Marketplace Items</h2>
-      <div id="listings-feed" class="link-container">
-        <!-- Javascript components loaded automatically during database fetch evaluation cycles -->
-      </div>
-    </div>
+        <div id="sell-box" class="card hidden">
+          <div class="card-content">
+            <h3>Post a Listing</h3>
+            <p>Add a product to the marketplace. Store owners' products can be shown inside their storefront.</p>
+            <div class="interactive-form-group">
+              <input type="text" id="item-title" placeholder="Item Name / Title" maxlength="120">
+              <textarea id="item-desc" placeholder="Item Description Details" maxlength="1200"></textarea>
+              <input type="number" id="item-price" placeholder="Price ($)" min="0.01" max="50000" step="0.01">
+              <div class="upload-wrapper-box">
+                <label for="item-image">Product Photo</label>
+                <input type="file" id="item-image" accept="image/*">
+              </div>
+              <button type="button" onclick="publishListing()" class="view-btn">Publish Offer</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="feed-content-column">
+        <div class="section-heading compact-heading">
+          <div>
+            <span class="eyebrow">MARKETPLACE</span>
+            <h2>Latest listings</h2>
+          </div>
+          <button type="button" class="view-btn secondary-action" onclick="refreshEverything()">Refresh</button>
+        </div>
+        <div id="listings-status" class="inline-status"></div>
+        <div id="listings-feed" class="link-container"></div>
+      </section>
+    </section>
   </main>
 
-  <!-- Interactive Negotiation Communication Portal Modal Overlay Sheet Container -->
-  <div id="chat-modal" class="modal-overlay hidden">
-    <div class="modal-card">
+  <div id="store-modal" class="modal-overlay hidden" onclick="closeStoreModal(event)">
+    <div class="store-modal-card" onclick="event.stopPropagation()">
+      <button type="button" class="modal-close" onclick="closeStoreModal()">&times;</button>
+      <div id="store-modal-content"></div>
+    </div>
+  </div>
+
+  <div id="chat-modal" class="modal-overlay hidden" onclick="closeChatRoom(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
       <div class="modal-header">
-        <h3 id="chat-title">Negotiation Interface</h3>
-        <button onclick="closeChatRoom()" class="close-modal-x-btn">&times;</button>
+        <h3 id="chat-title">Negotiation Chat</h3>
+        <button type="button" onclick="closeChatRoom()" class="close-modal-x-btn">&times;</button>
       </div>
-      <div id="chat-messages" class="modal-message-body-stream">
-        <!-- Loaded streams render dynamically during live message evaluation loops -->
-      </div>
+      <div id="chat-messages" class="modal-message-body-stream"></div>
       <div class="modal-footer-input-row">
-        <input type="text" id="chat-input" placeholder="Type a message to the seller...">
-        <button onclick="sendChatMessage()" class="view-btn">Send</button>
+        <input type="text" id="chat-input" placeholder="Type a message to the seller..." maxlength="1000">
+        <button type="button" onclick="sendChatMessage()" class="view-btn">Send</button>
       </div>
     </div>
   </div>
 
-  <!-- Footer block -->
-  <footer>
-    <p>&copy; 2026 Link Hub Marketplace. All rights reserved.</p>
-  </footer>
-
-  <script src="scrip.js"></script>
+  <footer><p>&copy; 2026 Link Hub Marketplace.</p></footer>
+  <script src="script.js"></script>
 </body>
 </html>
