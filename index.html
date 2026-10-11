@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0a0a0a">
-  <title>Link Hub Marketplace</title>
+  <meta name="theme-color" content="#1769ff">
+  <title>LinkHub — Marketplace</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,11 +12,12 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+  <div id="lh-loading-splash" class="lh-loading-splash" aria-label="Loading LinkHub"><div class="lh-splash-content"><img src="Logo2.png" alt="LinkHub logo" class="lh-splash-logo"><div class="lh-splash-wordmark">LinkHub<span>.</span></div><div class="lh-splash-track"><span></span></div><p>Marketplace for independent businesses</p></div></div>
   <header class="site-header">
     <div class="header-inner">
-      <div>
-        <h1>Link Hub</h1>
-        <p>Buy, sell and discover products and Business Storefronts.</p>
+      <a class="lh-brand" href="./" aria-label="LinkHub home"><img src="Logo2.png" alt="" class="lh-brand-logo"><span>LinkHub<span class="lh-brand-dot">.</span></span></a>
+      <div class="lh-header-copy">
+        <p>Discover independent businesses and their products.</p>
       </div>
       <button id="theme-toggle" type="button" aria-label="Toggle theme" onclick="toggleThemeMode()">🌙</button>
     </div>
@@ -28,8 +29,8 @@
     <section class="storefront-section">
       <div class="section-heading">
         <div>
-          <span class="eyebrow">BUSINESS STOREFRONTS</span>
-          <h2>Discover stores</h2>
+          <span class="eyebrow">THE LINKHUB COLLECTION</span>
+          <h2>Discover independent stores</h2>
           <p>Active stores and their products are loaded from Supabase.</p>
         </div>
         <button id="open-store-editor" class="view-btn secondary-action hidden" type="button" onclick="openStoreEditor()">My Store</button>
@@ -98,8 +99,8 @@
       <section class="feed-content-column">
         <div class="section-heading compact-heading">
           <div>
-            <span class="eyebrow">MARKETPLACE</span>
-            <h2>Latest listings</h2>
+            <span class="eyebrow">MADE FOR SMALL BUSINESS</span>
+            <h2>Find your next favourite</h2>
           </div>
           <button type="button" class="view-btn secondary-action" onclick="refreshEverything()">Refresh</button>
         </div>
@@ -130,7 +131,7 @@
     </div>
   </div>
 
-  <footer><p>&copy; 2026 Link Hub Marketplace.</p></footer>
+  <footer><p><span class="lh-footer-brand">LinkHub.</span> &copy; 2026 · Independent stores, one marketplace.</p></footer>
   <script src="script.js"></script>
 </body>
 </html>
